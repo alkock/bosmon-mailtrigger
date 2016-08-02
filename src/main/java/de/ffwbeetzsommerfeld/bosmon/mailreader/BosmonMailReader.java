@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package de.ffwbeetzsommerfeld.bosmon.mailreader;
+
 import com.sun.mail.imap.IMAPFolder;
 import java.io.IOException;
 
@@ -11,27 +12,28 @@ import javax.mail.*;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 /**
  *
  * @author jhomuth
  */
 public class BosmonMailReader {
-    
+
     private static Logger logger = Logger.getLogger(BosmonMailReader.class.getName());
 
     public static void main(String[] args) {
         String server = "imap.1blu.de";
-        String username = "o37889_0-alarm-kremmen";     
+        String username = "o37889_0-alarm-kremmen";
         String password = "1a2b3c4d";
 
         try {
-            listMessages(server, username, password);
+            new BosmonMailReader().process(server, username, password);
         } catch (Throwable e) {
-            logger.log(Level.SEVERE,"Fehler beim Emails laden",e);
+            logger.log(Level.SEVERE, "Fehler beim Emails laden", e);
         }
     }
 
-    private static void listMessages(String url, String username, String password) throws MessagingException {
+    private void process(String url, String username, String password) throws MessagingException {
         Properties props = System.getProperties();
         props.setProperty("mail.store.protocol", "imaps");
         Session session = Session.getDefaultInstance(props, null);
@@ -47,7 +49,7 @@ public class BosmonMailReader {
                 System.out.println("\t" + folders[i].getName());
             }
 
-            String folderName ="INBOX";
+            String folderName = "INBOX";
             IMAPFolder folder = (IMAPFolder) store.getFolder(folderName);
 
             long afterFolderSelectionTime = System.nanoTime();
@@ -105,32 +107,29 @@ public class BosmonMailReader {
                     folder.fetch(messages, metadataProfile);
                     System.out.println("loaded messages (took " + (System.nanoTime() - beforeTime) / 1000 / 1000 + " ms)");
 
-                    /*
-					 * Now that we have all the information we need, let's print some mails.
-					 * This should be wicked fast.
-                     */
+                  
                     beforeTime = System.nanoTime();
                     for (int i = messages.length - 1; i >= 0; i--) {
                         Message message = messages[i];
-                        long uid = folder.getUID(message);
-                        
+                        long uid;
+                        uid = folder.getUID(message);
                         boolean isRead = message.isSet(Flags.Flag.SEEN);
-                        
+
                         if (!isRead) {
-                            // new messages are green
-                            System.out.print("\u001B[32m");
+                            try {
+                                this.callBosMon((String) message.getContent());
+                            } catch (BosMonTriggerExecutionException | IOException ex) {
+                                Logger.getLogger(BosmonMailReader.class.getName()).log(Level.SEVERE, "BosMon konnte nicht getriggert werden", ex);
+                            }
+
                         }
-                        System.out.println("\t" + uid + "\t" + message.getSubject());
                         try {
                             System.out.println(message.getContent());
                         } catch (IOException ex) {
                             Logger.getLogger(BosmonMailReader.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        if (!isRead) {
-                            // reset color
-                            System.out.print("\u001B[0m");
-                        }
                         message.setFlag(Flags.Flag.SEEN, Boolean.TRUE);
+                        message.setFlag(Flags.Flag.DELETED, Boolean.TRUE);
                     }
                     System.out.println("Listed message (took " + (System.nanoTime() - beforeTime) / 1000 / 1000 + " ms)");
                 }
@@ -145,11 +144,16 @@ public class BosmonMailReader {
             store.close();
         }
     }
-    
-    private void callBosMon(){
+
+    private void callBosMon(String content) throws BosMonTriggerExecutionException {
+        try {
+            Runtime.getRuntime().exec("cmd /c start bosmon-trigger.bat");
+        } catch (IOException ex) {
+            throw new BosMonTriggerExecutionException("Unable to execute BosMon Trigger script", ex);
+        }
 //        curl --basic -u "Benutzername:Passwort" http://lokale IP:Port/telegramin/in1/input.xml --data "type=pocsag&address=1234567&flags=0&function=a&message=Hallo" -vk
     }
-    
+
     public boolean messageAlreadySent() {
         return false;
     }
