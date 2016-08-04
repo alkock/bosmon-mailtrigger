@@ -29,6 +29,7 @@ public class Config {
     public static final String BOSMON_SERVER_NAME = "BOSMON_SERVER_NAME";
     public static final String BOSMON_SERVER_PORT = "BOSMON_SERVER_PORT";
     public static final String ALLOWED_SENDER = "ALLOWED_SENDER";
+    public static final String BOSMON_DIAL_EXE = "BOSMON_DIAL_EXE";
 
     private Config() {
 

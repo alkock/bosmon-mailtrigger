@@ -46,8 +46,8 @@ public class Postman {
         }
     }
 
-    private List<AlarmMail> fetchMails(String url, String username, String password) throws MessagingException {
-        List<AlarmMail> alarmMails = new ArrayList<>();
+    private List<Alarm> fetchMails(String url, String username, String password) throws MessagingException {
+        List<Alarm> alarmMails = new ArrayList<>();
 
         Properties props = System.getProperties();
         props.setProperty("mail.store.protocol", "imaps");
@@ -91,14 +91,14 @@ public class Postman {
 
                         if (!isRead) {
                             try {
-                                AlarmMail alarmMail = new AlarmMail();
+                                Alarm alarmMail = new Alarm();
                                 for (Address address : message.getFrom()) {
                                     alarmMail.setFromAddress(address.toString());
                                 }
-                                alarmMail.setContent((String) message.getContent());
-                                alarmMail.setSubject((String) message.getSubject());
+                                alarmMail.setMessage((String) message.getContent());
+                                alarmMail.setRic((String) message.getSubject());
                                 alarmMails.add(alarmMail);
-                                System.out.println(alarmMail.getContent());
+                                System.out.println(alarmMail.getMessage());
                             } catch (IOException ex) {
                                 Logger.getLogger(Postman.class.getName()).log(Level.SEVERE, null, ex);
                             }

@@ -18,61 +18,69 @@ import java.util.logging.Logger;
  */
 public class BosMonExecutor {
 
-    private HashMap<String, Date> firedAlarms = new HashMap<>();
+    /**
+     * A map of all alarms send by this running instance of the BosMonExecutor
+     * (not persisted)
+     */
+    private HashMap<Alarm, Date> firedAlarms = new HashMap<>();
 
     private static final Logger LOG = Logger.getLogger(BosMonExecutor.class.getName());
 
-    
-    public void fireAlarm(String alarmText) {
+    public void fireAlarm(Alarm alarm) {
         try {
-            if (this.isAllowedToFire(alarmText)) {
-                this.callBosMon(alarmText);
+            if (this.isAllowedToFire(alarm)) {
+                this.callBosMon(alarm);
             } else {
                 LOG.warning("The alarm was already fired. Skipping....");
             }
         } catch (BosMonTriggerExecutionException ex) {
             LOG.log(Level.SEVERE, null, ex);
         } finally {
-            this.storeAlarm(alarmText);
+            this.storeAlarm(alarm);
         }
     }
 
     /**
      * This method will trigger BosMon to fire the alarm
+     *
      * @param alarmText The text you want to provide to BosMon
-     * @throws BosMonTriggerExecutionException 
+     * @throws BosMonTriggerExecutionException
      */
-    private void callBosMon(String alarmText) throws BosMonTriggerExecutionException {
+    private void callBosMon(Alarm mail) throws BosMonTriggerExecutionException {
+        String[] bosMonDialCommand = {Config.get(Config.BOSMON_DIAL_EXE),
+            "-username " + Config.get(Config.BOSMON_USER),
+            "-password " + Config.get(Config.BOSMON_PASS),
+            "-alertaddress " + mail.getRic(),
+            "-alertmessage " + mail.getMessage(),
+            "-close"};
         try {
-            Runtime.getRuntime().exec("cmd /c start bosmon-trigger.bat");
+            Runtime.getRuntime().exec(bosMonDialCommand);
         } catch (IOException ex) {
-            throw new BosMonTriggerExecutionException("Unable to execute BosMon Trigger script", ex);
+            throw new BosMonTriggerExecutionException("Unable to execute BosMonDial", ex);
         }
-//        curl --basic -u "Benutzername:Passwort" http://lokale IP:Port/telegramin/in1/input.xml --data "type=pocsag&address=1234567&flags=0&function=a&message=Hallo" -vk        
     }
 
-    ;
-    
     /**
      * Stores an alarm as fired
-     * @param alarmText 
+     *
+     * @param alarmText
      */
-    private void storeAlarm(String alarmText) {
-        firedAlarms.put(alarmText, Calendar.getInstance().getTime());
+    private void storeAlarm(Alarm alarm) {
+        firedAlarms.put(alarm, Calendar.getInstance().getTime());
     }
 
     /**
      * This methods checks whether an alarm has already been provided to BosMon
      *
-     * @param alarmText The text you want to emit
+     * @param alarm The text you want to emit
      * @return
      */
-    private boolean isAllowedToFire(String alarmText) {
-        boolean wasFireAlready = firedAlarms.containsKey(alarmText);
+    private boolean isAllowedToFire(Alarm alarm) {
+        boolean wasFireAlready = firedAlarms.containsKey(alarm);
         Boolean isAllowedToFire = Boolean.TRUE;
         if (wasFireAlready) {
             /* Check the time if the alarm was fired already */
-            Date lastEmitTime = firedAlarms.get(alarmText);
+            Date lastEmitTime = firedAlarms.get(alarm);
             if (Calendar.getInstance().getTimeInMillis() - lastEmitTime.getTime() < (1000 * 60 * 5)) {
                 /* If the timespan is less than the configured time - dont emit to bosmon */
                 isAllowedToFire = Boolean.FALSE;
