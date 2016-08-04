@@ -7,9 +7,9 @@ package de.ffwbeetzsommerfeld.bosmon.mailreader;
 
 import com.sun.mail.imap.IMAPFolder;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.mail.*;
 import java.util.Properties;
@@ -20,23 +20,19 @@ import java.util.logging.Logger;
  *
  * @author jhomuth
  */
-public class BosmonMailReader {
+public class Postman {
 
-    private static Logger logger = Logger.getLogger(BosmonMailReader.class.getName());
-
-    private static final String PROP_IMAP_SERVER = "IMAP_SERVER";
-    private static final String PROP_IMAP_USER = "IMAP_USER";
-    private static final String PROP_IMAP_PASS = "IMAP_PASS";
+    private static Logger logger = Logger.getLogger(Postman.class.getName());
 
     public static void main(String[] args) {
         Config.init(new File(args[0]));
 
-        String server = Config.get(PROP_IMAP_SERVER);
-        String username = Config.get(PROP_IMAP_USER);
-        String password = Config.get(PROP_IMAP_PASS);
+        String server = Config.get(Config.PROP_IMAP_SERVER);
+        String username = Config.get(Config.PROP_IMAP_USER);
+        String password = Config.get(Config.PROP_IMAP_PASS);
         while (true) {
             try {
-                new BosmonMailReader().process(server, username, password);
+                new Postman().fetchMails(server, username, password);
             } catch (Throwable e) {
                 logger.log(Level.SEVERE, "Fehler beim Emails laden", e);
             }
@@ -44,13 +40,15 @@ public class BosmonMailReader {
             try {
                 Thread.sleep(20000);
             } catch (InterruptedException ex) {
-                Logger.getLogger(BosmonMailReader.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Postman.class.getName()).log(Level.SEVERE, null, ex);
                 System.exit(1);
             }
         }
     }
 
-    private void process(String url, String username, String password) throws MessagingException {
+    private List<AlarmMail> fetchMails(String url, String username, String password) throws MessagingException {
+        List<AlarmMail> alarmMails = new ArrayList<>();
+
         Properties props = System.getProperties();
         props.setProperty("mail.store.protocol", "imaps");
         Session session = Session.getDefaultInstance(props, null);
@@ -92,21 +90,19 @@ public class BosmonMailReader {
                         boolean isRead = message.isSet(Flags.Flag.SEEN);
 
                         if (!isRead) {
-                            for (Address message1 : message.getFrom()) {
-                                
-                                
-                            }
                             try {
-                                this.callBosMon((String) message.getContent());
-                            } catch (BosMonTriggerExecutionException | IOException ex) {
-                                Logger.getLogger(BosmonMailReader.class.getName()).log(Level.SEVERE, "BosMon konnte nicht getriggert werden", ex);
+                                AlarmMail alarmMail = new AlarmMail();
+                                for (Address address : message.getFrom()) {
+                                    alarmMail.setFromAddress(address.toString());
+                                }
+                                alarmMail.setContent((String) message.getContent());
+                                alarmMail.setSubject((String) message.getSubject());
+                                alarmMails.add(alarmMail);
+                                System.out.println(alarmMail.getContent());
+                            } catch (IOException ex) {
+                                Logger.getLogger(Postman.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                        }
-                        try {
-                            System.out.println(message.getContent());
-                        } catch (IOException ex) {
-                            Logger.getLogger(BosmonMailReader.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        }                        
                         message.setFlag(Flags.Flag.SEEN, Boolean.TRUE);
                         message.setFlag(Flags.Flag.DELETED, Boolean.TRUE);
                     }
@@ -120,19 +116,7 @@ public class BosmonMailReader {
         } finally {
             store.close();
         }
+        return alarmMails;
     }
-
-    private void callBosMon(String content) throws BosMonTriggerExecutionException {
-        try {
-            Runtime.getRuntime().exec("cmd /c start bosmon-trigger.bat");
-        } catch (IOException ex) {
-            throw new BosMonTriggerExecutionException("Unable to execute BosMon Trigger script", ex);
-        }
-//        curl --basic -u "Benutzername:Passwort" http://lokale IP:Port/telegramin/in1/input.xml --data "type=pocsag&address=1234567&flags=0&function=a&message=Hallo" -vk
-    }
-
-    public boolean messageAlreadySent() {
-        return false;
-    }
-
+   
 }

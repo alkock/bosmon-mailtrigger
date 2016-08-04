@@ -17,25 +17,33 @@ import java.util.logging.Logger;
  * @author jhomuth
  */
 public class Config {
-    private static Config instance;
+
     private static Properties bosMonMailReaderProps = new Properties();
-    
-    private Config(){
-        
+
+    public static final String PROP_IMAP_SERVER = "IMAP_SERVER";
+    public static final String PROP_IMAP_USER = "IMAP_USER";
+    public static final String PROP_IMAP_PASS = "IMAP_PASS";
+    public static final String BOSMON_USER = "BOSMON_USER";
+    public static final String BOSMON_PASS = "BOSMON_PASS";
+    public static final String BOSMON_CHANNEL_NAME = "BOSMON_CHANNEL_NAME";
+    public static final String BOSMON_SERVER_NAME = "BOSMON_SERVER_NAME";
+    public static final String BOSMON_SERVER_PORT = "BOSMON_SERVER_PORT";
+    public static final String ALLOWED_SENDER = "ALLOWED_SENDER";
+
+    private Config() {
+
     }
-    
-    
-    
-    public static void init(File properties){
+
+    public static void init(File properties) {
         try {
             bosMonMailReaderProps.load(new FileReader(properties));
         } catch (IOException ex) {
-            Logger.getLogger(BosmonMailReader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Postman.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(1);
         }
     }
-    
-    public static String get(String key){
+
+    public static String get(String key) {
         return bosMonMailReaderProps.getProperty(key);
     }
 }
