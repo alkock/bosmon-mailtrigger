@@ -22,33 +22,15 @@ import java.util.logging.Logger;
  */
 public class Postman {
 
-    private static Logger logger = Logger.getLogger(Postman.class.getName());
+    private static Logger logger = Logger.getLogger(Postman.class.getSimpleName());
 
-    public static void main(String[] args) {
-        Config.init(new File(args[0]));
+    
 
-        String server = Config.get(Config.PROP_IMAP_SERVER);
+    public List<Alarm> fetchMails() throws MessagingException {
+        List<Alarm> alarmMails = new ArrayList<>();
+        String url = Config.get(Config.PROP_IMAP_SERVER);
         String username = Config.get(Config.PROP_IMAP_USER);
         String password = Config.get(Config.PROP_IMAP_PASS);
-        while (true) {
-            try {
-                new Postman().fetchMails(server, username, password);
-            } catch (Throwable e) {
-                logger.log(Level.SEVERE, "Fehler beim Emails laden", e);
-            }
-            logger.log(Level.INFO, "Emails checked, waiting 20 Seconds");
-            try {
-                Thread.sleep(20000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Postman.class.getName()).log(Level.SEVERE, null, ex);
-                System.exit(1);
-            }
-        }
-    }
-
-    private List<Alarm> fetchMails(String url, String username, String password) throws MessagingException {
-        List<Alarm> alarmMails = new ArrayList<>();
-
         Properties props = System.getProperties();
         props.setProperty("mail.store.protocol", "imaps");
         Session session = Session.getDefaultInstance(props, null);
@@ -97,7 +79,9 @@ public class Postman {
                                 }
                                 alarmMail.setMessage((String) message.getContent());
                                 alarmMail.setRic((String) message.getSubject());
+                                alarmMail.setAlarmTime(message.getSentDate());
                                 alarmMails.add(alarmMail);
+                                
                                 System.out.println(alarmMail.getMessage());
                             } catch (IOException ex) {
                                 Logger.getLogger(Postman.class.getName()).log(Level.SEVERE, null, ex);

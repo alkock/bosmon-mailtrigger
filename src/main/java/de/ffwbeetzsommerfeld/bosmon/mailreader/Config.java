@@ -29,7 +29,11 @@ public class Config {
     public static final String BOSMON_SERVER_NAME = "BOSMON_SERVER_NAME";
     public static final String BOSMON_SERVER_PORT = "BOSMON_SERVER_PORT";
     public static final String ALLOWED_SENDER = "ALLOWED_SENDER";
+    public static final String SENDER_ADDRESS_VALIDATION = "SENDER_ADDRESS_VALIDATION";
     public static final String BOSMON_DIAL_EXE = "BOSMON_DIAL_EXE";
+    public static final String MAX_ALARM_AGE = "MAX_ALARM_AGE";
+    public static final String ALARM_SUPRESS_TIME = "ALARM_SUPRESS_TIME";
+    public static final String POLLING_SECONDS = "POLLING_SECONDS";
 
     private Config() {
 

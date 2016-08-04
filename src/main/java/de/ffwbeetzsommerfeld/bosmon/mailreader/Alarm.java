@@ -1,5 +1,6 @@
 package de.ffwbeetzsommerfeld.bosmon.mailreader;
 
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -13,6 +14,26 @@ public class Alarm {
     private String message;
 
     private String fromAddress;
+
+    private Date alarmTime;
+
+    /**
+     * Get the value of alarmTime
+     *
+     * @return the value of alarmTime
+     */
+    public Date getAlarmTime() {
+        return alarmTime;
+    }
+
+    /**
+     * Set the value of alarmTime
+     *
+     * @param alarmTime new value of alarmTime
+     */
+    public void setAlarmTime(Date alarmTime) {
+        this.alarmTime = alarmTime;
+    }
 
     /**
      * Get the value of fromAddress
@@ -47,6 +68,9 @@ public class Alarm {
      * @param message new value of content
      */
     public void setMessage(String message) {
+        if (message != null) {
+            message = message.trim();
+        }
         this.message = message;
     }
 
@@ -65,6 +89,9 @@ public class Alarm {
      * @param ric new value of subject
      */
     public void setRic(String ric) {
+        if (ric != null) {
+            ric = ric.trim();
+        }
         this.ric = ric;
     }
 
@@ -91,5 +118,14 @@ public class Alarm {
         hash = 61 * hash + Objects.hashCode(this.ric);
         hash = 61 * hash + Objects.hashCode(this.message);
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("\n").append("Alarm ").append(this.getAlarmTime()).append("\n");
+        stringBuilder.append("\t").append("RIC: ").append(this.getRic()).append("\n");
+        stringBuilder.append("\t").append("Meldung: ").append(this.getMessage()).append("\n");
+        return stringBuilder.toString();
     }
 }
