@@ -33,29 +33,17 @@ schreiben, aber lasst es mich kurz machen - ich will nicht.
 Daher habe ich mich, weil meine Zeit auch drückte, einfach für ein kleines Zusatztool entschieden.
 Sollte jemand von euch diesen Code zu einem Plugin adaptieren wollen, so tut euch keinen Zwang an :)
 
-## Usage
+## Installation
+TBD:
 
-TODO: Write usage instructions
+## Konfiguration
+TBD:
 
-## Contributing
+##Arbeitsweise
+TBD:
 
-1. Fork it!
-2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request :D
-
-## History
-
-TODO: Write history
-
-## Credits
-
-TODO: Write credits
-
-## License
-
-TODO: Write license
-]]></content>
-  <tabTrigger>readme</tabTrigger>
-</snippet>
+##Offene Bugs/TODOs
+<ul>
+<li>IMAP Client korrekt verwenden. Aktuell wird noch alle X Sekunden eine Verbindung aufgebaut und aktiv geguckt ob neue Alarme vorliegen. Also quasi polling.</li>
+<li>RIC und Meldungstext aus Email konfigurierbar auslesen. Aktuell muss die Email noch ein konkretes Format haben.</li>
+</ul>
