@@ -41,7 +41,7 @@ public class BosMonExecutor {
      * @param alarm Der weiterzuleitende Alarm
      */
     public void fireAlarm(Alarm alarm) {
-        LOG.log(Level.INFO, "Processing alarm {0}", alarm.toString());
+        LOG.log(Level.INFO, "Verarbeite Alarm {0}", alarm.toString());
         try {
             AlarmExecutionStatus state = this.isAllowedToFire(alarm);
             if (state.getIsAllowedToBeFired()) {
@@ -53,7 +53,7 @@ public class BosMonExecutor {
                 }
             }
         } catch (BosMonTriggerExecutionException ex) {
-            LOG.log(Level.SEVERE, "Unable to call bosmon", ex);
+            LOG.log(Level.SEVERE, "Alarm konnte nicht an BosMon weitergereicht werden", ex);
         } finally {
             this.storeAlarm(alarm);
         }
