@@ -1,6 +1,7 @@
 package de.ffwbeetzsommerfeld.bosmon.mailreader;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,25 +13,38 @@ import java.util.logging.Logger;
  * Diese Klasse ist für die Weiterleitung der Alarme zur BosMon Instanz zuständig.
  * @author jhomuth
  */
-public class BosMonExecutor {
+public class BosMonExecutor implements Runnable {
 
     /**
      * Eine Map aller bereits ausgeführten Alarme. Diese Map wird nicht persistiert
      * und merkt sich daher nur die Alarme seit der letzten Ausführung.
      */
-    private HashMap<Alarm, Date> executedAlarms = new HashMap<>();
+    private static HashMap<Alarm, Date> executedAlarms = new HashMap<>();
+    
+    /**
+     * Die Alarme die bei der Ausführung dieses Threads weitergeleitet werden sollen
+     */
+    private List<Alarm> alarmsToFire = new ArrayList<>();
 
     /**
      * Logger für diese Klasse
      */
     private static final Logger LOG = Logger.getLogger(BosMonExecutor.class.getSimpleName());
+    
+    /**
+     * Konstruktor
+     * @param alarms 
+     */
+    public BosMonExecutor(List<Alarm> alarms){
+        this.alarmsToFire = alarms;
+    }
 
     /**
      * Diese Methode leitet die übergebene Liste von Alarmen an BosMon weiter,
      * sofern für die Alarme alle Bedingungen zutreffen.
      * @param alarms Die Liste von auszuführenden Alarmen
      */
-    public void fireAlarms(List<Alarm> alarms) {
+    private void fireAlarms(List<Alarm> alarms) {
         for (Alarm alarm : alarms) {
             this.fireAlarm(alarm);
         }
@@ -40,7 +54,7 @@ public class BosMonExecutor {
      * Diese Methode führt den übergebenen Alarm aus (Weiterleitung an BosMon)
      * @param alarm Der weiterzuleitende Alarm
      */
-    public void fireAlarm(Alarm alarm) {
+    private void fireAlarm(Alarm alarm) {
         LOG.log(Level.INFO, "Verarbeite Alarm {0}", alarm.toString());
         try {
             AlarmExecutionStatus state = this.isAllowedToFire(alarm);
@@ -83,7 +97,7 @@ public class BosMonExecutor {
      * Diese Methode speichert einen Alarm als ausgeführt ab.
      * @param alarm Der zu merkende Alarm
      */
-    private void storeAlarm(Alarm alarm) {
+    private synchronized void storeAlarm(Alarm alarm) {
         executedAlarms.put(alarm, Calendar.getInstance().getTime());
     }
 
@@ -98,7 +112,7 @@ public class BosMonExecutor {
      * @param alarm
      * @return 
      */
-    private AlarmExecutionStatus isAllowedToFire(Alarm alarm) {
+    private synchronized AlarmExecutionStatus isAllowedToFire(Alarm alarm) {
         AlarmExecutionStatus status = new AlarmExecutionStatus();
         boolean wasFireAlready = executedAlarms.containsKey(alarm);
         Boolean isAllowedToFire = Boolean.TRUE;
@@ -129,6 +143,11 @@ public class BosMonExecutor {
         }
         status.setIsAllowedToBeFired(isAllowedToFire);
         return status;
+    }
+
+    @Override
+    public void run() {
+        this.fireAlarms(alarmsToFire);
     }
 
 }

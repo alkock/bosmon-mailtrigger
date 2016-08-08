@@ -9,13 +9,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Diese Klasse beschreibt den Ausführungsstatus eines Alarms
  *
  * @author jhomuth
  */
 public class AlarmExecutionStatus {
 
+    /**
+     * Flag ob dieser Alarm ausgeführt werden darf oder nicht
+     */
     private Boolean isAllowedToBeFired;
 
+    /**
+     * Validierungsfehler sofern dieser Alarm nicht ausgeführt werden darf.
+     */
     private List<AlarmValidationFailure> validationErrors = new ArrayList<>();
 
     /**

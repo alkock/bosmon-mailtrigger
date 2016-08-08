@@ -72,7 +72,11 @@ public class Config {
     /**
      * Key für die Konfigurationseinstellung der Wartezeit zwischen zwei Email-Abholvorgängen
      */
-    public static final String POLLING_SECONDS = "POLLING_SECONDS";
+    public static final String KEY_POLLING_SECONDS = "POLLING_SECONDS";
+    /**
+     * Key für die Konfigurationseinstellung ob der Email Abrufprozess auf Debug laufen soll
+     */
+    public static final String KEY_MAIL_TRANSFER_DEBUG = "DEBUG_MAIL";
 
     private Config() {
 

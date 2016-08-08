@@ -1,6 +1,7 @@
 package de.ffwbeetzsommerfeld.bosmon.mailreader;
 
 import com.sun.mail.imap.IMAPFolder;
+import de.ffwbeetzsommerfeld.bosmon.mailreader.util.Recipient;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import javax.mail.*;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import de.ffwbeetzsommerfeld.bosmon.mailreader.util.AlarmHeadquarter;
 
 /**
  * Diese Klasse bietet die grundsätzliche Funktionalität um Email abzuholen und
@@ -16,9 +18,11 @@ import java.util.logging.Logger;
  *
  * @author jhomuth
  */
-public class Postman {
+public class Postman implements AlarmHeadquarter {
 
     private static final Logger LOG = Logger.getLogger(Postman.class.getSimpleName());
+
+    private List<Recipient> recipients = new ArrayList<>();
 
     /**
      * Diese Methode holt die Alarm-Emails ab.
@@ -28,7 +32,7 @@ public class Postman {
      * @throws MessagingException im Fall das die Emails nicht abgeholt werden
      * konnten.
      */
-    public List<Alarm> fetchMails() throws MessagingException {
+    public void fetchMailsAndQuitConnection() throws MessagingException {
         List<Alarm> alarmMails = new ArrayList<>();
 
         /* Hole Authentifiezierungsdatens */
@@ -37,6 +41,7 @@ public class Postman {
         String password = Config.get(Config.KEY_PROP_IMAP_PASS);
         Properties props = System.getProperties();
         props.setProperty("mail.store.protocol", "imaps");
+        props.setProperty("mail.debug", Config.get(Config.KEY_MAIL_TRANSFER_DEBUG));
         Session session = Session.getDefaultInstance(props, null);
         Store store = session.getStore("imaps");
         try {
@@ -45,7 +50,6 @@ public class Postman {
 
             String folderName = "INBOX";
             IMAPFolder folder = (IMAPFolder) store.getFolder(folderName);
-
             try {
                 if (!folder.isOpen()) {
                     /* Wir löschen die Mails sofort nach dem abholen, also brauchen wir ReadWrite */
@@ -88,6 +92,7 @@ public class Postman {
                         message.setFlag(Flags.Flag.DELETED, Boolean.TRUE);
                     }
                 }
+
             } finally {
                 if (folder.isOpen()) {
                     folder.close(true);
@@ -96,7 +101,38 @@ public class Postman {
         } finally {
             store.close();
         }
-        return alarmMails;
+        this.deliverAlarms(alarmMails);
+    }
+
+    @Override
+    public void deliverAlarms(List<Alarm> alarms) {
+        if (alarms != null && !alarms.isEmpty()) {
+            for (Recipient recipient : recipients) {
+                recipient.deliver(alarms);
+            }
+        }else{
+            LOG.fine("Keine neuen Alarme empfangen...");
+        }
+    }
+
+    /**
+     * Registriert einen neuen Empfänger für eingehende Alarme
+     *
+     * @param recipient
+     */
+    @Override
+    public void registerRecipient(Recipient recipient) {
+        recipients.add(recipient);
+    }
+
+    /**
+     * Enfernt einen Empfänger aus der Liste der Empfänger für eingehende Alarme
+     *
+     * @param recipient
+     */
+    @Override
+    public void deRegisterRecipient(Recipient recipient) {
+        recipients.remove(recipient);
     }
 
 }

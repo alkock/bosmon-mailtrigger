@@ -4,17 +4,30 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- *
+ * Diese Klasse beschreibt einen eingehenden Alarm
+ * 
  * @author jhomuth
  */
 public class Alarm {
-
+    
+    /**
+     * Die RIC für den Alarm
+     */
     private String ric;
 
+    /**
+     * Der Alarmtext
+     */
     private String message;
 
+    /**
+     * Die Absender-Adresse
+     */
     private String fromAddress;
 
+    /**
+     * Die Alarmierungszeit
+     */
     private Date alarmTime;
 
     /**
