@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author jhomuth
  */
-public class AlarmFireStatus {
+public class AlarmExecutionStatus {
 
     private Boolean isAllowedToBeFired;
 

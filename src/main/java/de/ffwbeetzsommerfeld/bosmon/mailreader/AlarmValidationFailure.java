@@ -1,27 +1,33 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.ffwbeetzsommerfeld.bosmon.mailreader;
 
 /**
- *
+ * Klasse beschreibt Validierungsfehler die bei einem Alarm auftreten können
+ * 
  * @author jhomuth
  */
 public enum AlarmValidationFailure {
+    
+    /**
+     * Die Absenderadresse stimmt nicht mit der konfigurierten Adresse überein
+     */
     WRONG_SENDER_ADDRESS {
         @Override
         public String getValidationMessage() {
             return "Alarm ist vom falschen Absender";
         }
     },
+    /**
+     * Dieser Alarm wurde bereits an BosMon übertragen
+     */
     ALARM_ALREADY_FIRED {
         @Override
         public String getValidationMessage() {
              return "Alarm ist bereits verarbeitet";
         }
     },
+    /**
+     * Dieser Alarm ist zu alt.
+     */
     ALARM_TO_OLD {
         @Override
         public String getValidationMessage() {
@@ -29,6 +35,10 @@ public enum AlarmValidationFailure {
         }
     };
     
+    /**
+     * Diese Methode liefert eine menschenlesbare Beschreibung des Validierungsfehlers
+     * @return 
+     */
     public abstract String getValidationMessage();
     
 }

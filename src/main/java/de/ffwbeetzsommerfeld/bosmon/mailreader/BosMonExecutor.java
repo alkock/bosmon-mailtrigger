@@ -9,26 +9,26 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Diese Klasse ist für die Weiterleitung der Alarme zur BosMon Instanz zuständig.
  * @author jhomuth
  */
 public class BosMonExecutor {
 
     /**
-     * A map of all alarms send by this running instance of the BosMonExecutor
-     * (not persisted)
+     * Eine Map aller bereits ausgeführten Alarme. Diese Map wird nicht persistiert
+     * und merkt sich daher nur die Alarme seit der letzten Ausführung.
      */
-    private HashMap<Alarm, Date> firedAlarms = new HashMap<>();
+    private HashMap<Alarm, Date> executedAlarms = new HashMap<>();
 
     /**
-     * Logger for this class
+     * Logger für diese Klasse
      */
     private static final Logger LOG = Logger.getLogger(BosMonExecutor.class.getSimpleName());
 
     /**
-     * This method will fire the provided list of alarms
-     *
-     * @param alarms
+     * Diese Methode leitet die übergebene Liste von Alarmen an BosMon weiter,
+     * sofern für die Alarme alle Bedingungen zutreffen.
+     * @param alarms Die Liste von auszuführenden Alarmen
      */
     public void fireAlarms(List<Alarm> alarms) {
         for (Alarm alarm : alarms) {
@@ -37,15 +37,13 @@ public class BosMonExecutor {
     }
 
     /**
-     * Method will fire the alarm provided to bosmon if the alarm wasn't
-     * executed before
-     *
-     * @param alarm
+     * Diese Methode führt den übergebenen Alarm aus (Weiterleitung an BosMon)
+     * @param alarm Der weiterzuleitende Alarm
      */
     public void fireAlarm(Alarm alarm) {
         LOG.log(Level.INFO, "Processing alarm {0}", alarm.toString());
         try {
-            AlarmFireStatus state = this.isAllowedToFire(alarm);
+            AlarmExecutionStatus state = this.isAllowedToFire(alarm);
             if (state.getIsAllowedToBeFired()) {
                 this.callBosMon(alarm);
             } else {
@@ -62,10 +60,10 @@ public class BosMonExecutor {
     }
 
     /**
-     * This method will trigger BosMon to fire the alarm
-     *
-     * @param alarmText The text you want to provide to BosMon
-     * @throws BosMonTriggerExecutionException
+     * Diese Methode übernimmt die technische Weiterleitung an BosMon via BosMonDial
+     * @param alarm Der weiterzuleitende Alarm
+     * @throws BosMonTriggerExecutionException Im Fall das ein Fehler bei der 
+     * Ausführung von BosMonDial aufgetreten ist.
      */
     private void callBosMon(Alarm alarm) throws BosMonTriggerExecutionException {
         String[] bosMonDialCommand = {Config.get(Config.BOSMON_DIAL_EXE),
@@ -77,31 +75,35 @@ public class BosMonExecutor {
         try {
             Runtime.getRuntime().exec(bosMonDialCommand);
         } catch (IOException ex) {
-            throw new BosMonTriggerExecutionException("Unable to execute BosMonDial", ex);
+            throw new BosMonTriggerExecutionException("Fehler bei der BosMonDial-Ausführung", ex);
         }
     }
 
     /**
-     * Stores an alarm as fired
-     *
-     * @param alarmText
+     * Diese Methode speichert einen Alarm als ausgeführt ab.
+     * @param alarm Der zu merkende Alarm
      */
     private void storeAlarm(Alarm alarm) {
-        firedAlarms.put(alarm, Calendar.getInstance().getTime());
+        executedAlarms.put(alarm, Calendar.getInstance().getTime());
     }
 
     /**
-     * This methods checks whether an alarm has already been provided to BosMon
-     *
-     * @param alarm The text you want to emit
-     * @return
+     * Diese Methode prüft ob ein Alarm ausgeführt werden darf. Es werden folgende
+     * Fälle geprüft.
+     * <ul>
+     * <li>Absender-Adresse korrekt?</li>
+     * <li>Wurde der Alarm bereits ausgeführt? Unterdrückung mehrfacher Alarmierung innerhalb konfigurierbarer Zeit.</li>
+     * <li>Ist der Alarm zu alt? Keine nachträgliche Alarmierung wenn das Programm längere Zeit unterbrochen wurde.</li>
+     * </ul>
+     * @param alarm
+     * @return 
      */
-    private AlarmFireStatus isAllowedToFire(Alarm alarm) {
-        AlarmFireStatus status = new AlarmFireStatus();
-        boolean wasFireAlready = firedAlarms.containsKey(alarm);
+    private AlarmExecutionStatus isAllowedToFire(Alarm alarm) {
+        AlarmExecutionStatus status = new AlarmExecutionStatus();
+        boolean wasFireAlready = executedAlarms.containsKey(alarm);
         Boolean isAllowedToFire = Boolean.TRUE;
 
-        /* Check sender address */
+        /* Überprüfe Absender-Adresse */
         if (Boolean.valueOf(Config.get(Config.SENDER_ADDRESS_VALIDATION))) {
             if (alarm.getFromAddress() == null || !alarm.getFromAddress().contains(Config.get(Config.ALLOWED_SENDER))) {
                 isAllowedToFire = Boolean.FALSE;
@@ -109,18 +111,18 @@ public class BosMonExecutor {
             }
         }
 
-        /* Check for already fired alarm */
+        /* Überprüfe ob der Alarm bereits ausgeführt wurde */
         if (wasFireAlready) {
-            /* Check the time if the alarm was fired already */
-            Date lastEmitTime = firedAlarms.get(alarm);
+            /* Wenn der Alarm bereits ausgeführt wurde überprüfe die abgelaufene Zeit. Eventuell Nachalarmierung? */
+            Date lastEmitTime = executedAlarms.get(alarm);
             if ((Calendar.getInstance().getTimeInMillis() - lastEmitTime.getTime()) < (1000 * 60 * new Long(Config.get(Config.ALARM_SUPRESS_TIME)))) {
-                /* If the timespan is less than the configured time - dont emit to bosmon */
+                /* Wenn die konfigurierte Zeitspanne noch nicht abgelaufen ist, sorge dafür das der Alarm nicht nochmals an BosMon übertragen wurde */
                 isAllowedToFire = Boolean.FALSE;
                 status.addValidationError(AlarmValidationFailure.ALARM_ALREADY_FIRED);
             }
         }
 
-        /* Check if the alarm is too old */
+        /* Überprüfe das generelle Alter des Alarms. Sollte dieses Programm längere Zeit unterbrochen gewesen sein, sollten alte Alarme nicht nochmal gesendet werden. */
         if ((Calendar.getInstance().getTime().getTime() - alarm.getAlarmTime().getTime()) > (1000L * 60L * new Long(Config.get(Config.MAX_ALARM_AGE)))) {
             isAllowedToFire = Boolean.FALSE;
             status.addValidationError(AlarmValidationFailure.ALARM_TO_OLD);
