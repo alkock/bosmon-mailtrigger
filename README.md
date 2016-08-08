@@ -31,6 +31,16 @@ schreiben, aber lasst es mich kurz machen - ich will nicht.
 Daher habe ich mich, weil meine Zeit auch drückte, einfach für ein kleines Zusatztool entschieden.
 Sollte jemand von euch diesen Code zu einem Plugin adaptieren wollen, so tut euch keinen Zwang an :)
 
+## Was wird benötigt?
+Um Alarme via Mail in Bosmon empfangen zu können braucht ihr folgendes:
+<ul>
+<li>BosMon (wer hätte das gedacht)</li>
+<li>BosMon Dial</li>
+<li>Ein Email Konto das ausschließlich für das Empfangen von AlarmEmails vorhanden ist (Achtung: jede eingehende Email an die auszuwertende Adresse wird ohne Rückfrage sofort nach der Verarbeitung gelöscht)</li>
+<li><li>Ferner sollte dieses Email Konto auch nirgends ausgelesen werden! Also nur dur dieses Programm bearbeitet werden</li></li>
+<li>Eine automatische Alarmierung via Mail (entweder von der Leitstelle oder von einer anderen BosMon Instanz (zu empfehlen)<li>
+</ul>
+
 ## Installation
 TBD:
 
