@@ -54,4 +54,5 @@ TBD:
 <ul>
 <li>IMAP Client korrekt verwenden. Aktuell wird noch alle X Sekunden eine Verbindung aufgebaut und aktiv geguckt ob neue Alarme vorliegen. Also quasi polling.</li>
 <li>RIC und Meldungstext aus Email konfigurierbar auslesen. Aktuell muss die Email noch ein konkretes Format haben.</li>
+<li>mehrere erlaubte Absender-Adressen erlauben</li>
 </ul>

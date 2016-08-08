@@ -66,9 +66,9 @@ public class BosMonExecutor {
      * Ausführung von BosMonDial aufgetreten ist.
      */
     private void callBosMon(Alarm alarm) throws BosMonTriggerExecutionException {
-        String[] bosMonDialCommand = {Config.get(Config.BOSMON_DIAL_EXE),
-            "-username " + Config.get(Config.BOSMON_USER),
-            "-password " + Config.get(Config.BOSMON_PASS),
+        String[] bosMonDialCommand = {Config.get(Config.KEY_BOSMON_DIAL_EXE),
+            "-username " + Config.get(Config.KEY_BOSMON_USER),
+            "-password " + Config.get(Config.KEY_BOSMON_PASS),
             "-alertaddress " + alarm.getRic(),
             "-alertmessage " + alarm.getMessage(),
             "-close"};
@@ -104,8 +104,8 @@ public class BosMonExecutor {
         Boolean isAllowedToFire = Boolean.TRUE;
 
         /* Überprüfe Absender-Adresse */
-        if (Boolean.valueOf(Config.get(Config.SENDER_ADDRESS_VALIDATION))) {
-            if (alarm.getFromAddress() == null || !alarm.getFromAddress().contains(Config.get(Config.ALLOWED_SENDER))) {
+        if (Boolean.valueOf(Config.get(Config.KEY_SENDER_ADDRESS_VALIDATION))) {
+            if (alarm.getFromAddress() == null || !alarm.getFromAddress().contains(Config.get(Config.KEY_ALLOWED_SENDER))) {
                 isAllowedToFire = Boolean.FALSE;
                 status.addValidationError(AlarmValidationFailure.WRONG_SENDER_ADDRESS);
             }
@@ -115,7 +115,7 @@ public class BosMonExecutor {
         if (wasFireAlready) {
             /* Wenn der Alarm bereits ausgeführt wurde überprüfe die abgelaufene Zeit. Eventuell Nachalarmierung? */
             Date lastEmitTime = executedAlarms.get(alarm);
-            if ((Calendar.getInstance().getTimeInMillis() - lastEmitTime.getTime()) < (1000 * 60 * new Long(Config.get(Config.ALARM_SUPRESS_TIME)))) {
+            if ((Calendar.getInstance().getTimeInMillis() - lastEmitTime.getTime()) < (1000 * 60 * new Long(Config.get(Config.KEY_ALARM_SUPRESS_TIME)))) {
                 /* Wenn die konfigurierte Zeitspanne noch nicht abgelaufen ist, sorge dafür das der Alarm nicht nochmals an BosMon übertragen wurde */
                 isAllowedToFire = Boolean.FALSE;
                 status.addValidationError(AlarmValidationFailure.ALARM_ALREADY_FIRED);
@@ -123,7 +123,7 @@ public class BosMonExecutor {
         }
 
         /* Überprüfe das generelle Alter des Alarms. Sollte dieses Programm längere Zeit unterbrochen gewesen sein, sollten alte Alarme nicht nochmal gesendet werden. */
-        if ((Calendar.getInstance().getTime().getTime() - alarm.getAlarmTime().getTime()) > (1000L * 60L * new Long(Config.get(Config.MAX_ALARM_AGE)))) {
+        if ((Calendar.getInstance().getTime().getTime() - alarm.getAlarmTime().getTime()) > (1000L * 60L * new Long(Config.get(Config.KEY_MAX_ALARM_AGE)))) {
             isAllowedToFire = Boolean.FALSE;
             status.addValidationError(AlarmValidationFailure.ALARM_TO_OLD);
         }
