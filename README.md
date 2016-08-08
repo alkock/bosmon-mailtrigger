@@ -1,8 +1,6 @@
-<snippet>
-  <content><![CDATA[
-# ${1:Project Name}
+# bosmon-mailtrigger
 
-Das Programm ${1:Project Name} stellt eine Brücke von einem IMAP-Client zu <a href=http://www.bosmon.de>BosMon</a> dar.
+Das Programm bosmon-mailtrigger (Arbeitsname) stellt eine Brücke von einem IMAP-Client zu <a href=http://www.bosmon.de>BosMon</a> dar.
 
 
 ## Allgemeines
