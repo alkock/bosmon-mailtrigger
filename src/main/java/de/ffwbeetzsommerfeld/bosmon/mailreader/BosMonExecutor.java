@@ -10,19 +10,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Diese Klasse ist für die Weiterleitung der Alarme zur BosMon Instanz zuständig.
+ * Diese Klasse ist für die Weiterleitung der Alarme zur BosMon Instanz
+ * zuständig.
+ *
  * @author jhomuth
  */
 public class BosMonExecutor implements Runnable {
 
     /**
-     * Eine Map aller bereits ausgeführten Alarme. Diese Map wird nicht persistiert
-     * und merkt sich daher nur die Alarme seit der letzten Ausführung.
+     * Eine Map aller bereits ausgeführten Alarme. Diese Map wird nicht
+     * persistiert und merkt sich daher nur die Alarme seit der letzten
+     * Ausführung.
      */
     private static HashMap<Alarm, Date> executedAlarms = new HashMap<>();
-    
+
     /**
-     * Die Alarme die bei der Ausführung dieses Threads weitergeleitet werden sollen
+     * Die Alarme die bei der Ausführung dieses Threads weitergeleitet werden
+     * sollen
      */
     private List<Alarm> alarmsToFire = new ArrayList<>();
 
@@ -30,18 +34,20 @@ public class BosMonExecutor implements Runnable {
      * Logger für diese Klasse
      */
     private static final Logger LOG = Logger.getLogger(BosMonExecutor.class.getSimpleName());
-    
+
     /**
      * Konstruktor
-     * @param alarms 
+     *
+     * @param alarms
      */
-    public BosMonExecutor(List<Alarm> alarms){
+    public BosMonExecutor(List<Alarm> alarms) {
         this.alarmsToFire = alarms;
     }
 
     /**
      * Diese Methode leitet die übergebene Liste von Alarmen an BosMon weiter,
      * sofern für die Alarme alle Bedingungen zutreffen.
+     *
      * @param alarms Die Liste von auszuführenden Alarmen
      */
     private void fireAlarms(List<Alarm> alarms) {
@@ -52,6 +58,7 @@ public class BosMonExecutor implements Runnable {
 
     /**
      * Diese Methode führt den übergebenen Alarm aus (Weiterleitung an BosMon)
+     *
      * @param alarm Der weiterzuleitende Alarm
      */
     private void fireAlarm(Alarm alarm) {
@@ -74,9 +81,11 @@ public class BosMonExecutor implements Runnable {
     }
 
     /**
-     * Diese Methode übernimmt die technische Weiterleitung an BosMon via BosMonDial
+     * Diese Methode übernimmt die technische Weiterleitung an BosMon via
+     * BosMonDial
+     *
      * @param alarm Der weiterzuleitende Alarm
-     * @throws BosMonTriggerExecutionException Im Fall das ein Fehler bei der 
+     * @throws BosMonTriggerExecutionException Im Fall das ein Fehler bei der
      * Ausführung von BosMonDial aufgetreten ist.
      */
     private void callBosMon(Alarm alarm) throws BosMonTriggerExecutionException {
@@ -95,6 +104,7 @@ public class BosMonExecutor implements Runnable {
 
     /**
      * Diese Methode speichert einen Alarm als ausgeführt ab.
+     *
      * @param alarm Der zu merkende Alarm
      */
     private synchronized void storeAlarm(Alarm alarm) {
@@ -102,15 +112,18 @@ public class BosMonExecutor implements Runnable {
     }
 
     /**
-     * Diese Methode prüft ob ein Alarm ausgeführt werden darf. Es werden folgende
-     * Fälle geprüft.
+     * Diese Methode prüft ob ein Alarm ausgeführt werden darf. Es werden
+     * folgende Fälle geprüft.
      * <ul>
      * <li>Absender-Adresse korrekt?</li>
-     * <li>Wurde der Alarm bereits ausgeführt? Unterdrückung mehrfacher Alarmierung innerhalb konfigurierbarer Zeit.</li>
-     * <li>Ist der Alarm zu alt? Keine nachträgliche Alarmierung wenn das Programm längere Zeit unterbrochen wurde.</li>
+     * <li>Wurde der Alarm bereits ausgeführt? Unterdrückung mehrfacher
+     * Alarmierung innerhalb konfigurierbarer Zeit.</li>
+     * <li>Ist der Alarm zu alt? Keine nachträgliche Alarmierung wenn das
+     * Programm längere Zeit unterbrochen wurde.</li>
      * </ul>
+     *
      * @param alarm
-     * @return 
+     * @return
      */
     private synchronized AlarmExecutionStatus isAllowedToFire(Alarm alarm) {
         AlarmExecutionStatus status = new AlarmExecutionStatus();

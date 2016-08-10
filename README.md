@@ -46,9 +46,13 @@ TBD:
 
 ## Konfiguration
 TBD:
+Konfigurationsdatei
+Alle Properties beschreiben
+RIC Adresse forcieren
 
 ##Arbeitsweise
 TBD:
+Email auslesen, via BosMonDial weiterleiten
 
 ##Offene Bugs/TODOs
 <ul>

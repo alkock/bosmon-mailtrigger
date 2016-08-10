@@ -88,11 +88,16 @@ public class Alarm {
     }
 
     /**
-     * Get the value of subject
+     * Get the value of ric.
+     * If a ric was forced via the configuration, this ric is always returned
      *
      * @return the value of subject
      */
     public String getRic() {
+        String forcedRic = Config.get(Config.KEY_FORCE_RIC);
+        if(forcedRic != null && !forcedRic.trim().isEmpty()){
+            return forcedRic;
+        }
         return ric;
     }
 
