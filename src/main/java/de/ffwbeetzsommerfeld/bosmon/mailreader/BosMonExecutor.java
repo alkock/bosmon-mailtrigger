@@ -91,23 +91,27 @@ public class BosMonExecutor implements Runnable {
      */
     private void callBosMon(Alarm alarm) throws BosMonTriggerExecutionException {
         /* Determine whether to run curl or bosmon */
-
-        switch (Executor.valueOf(Config.get(Config.KEY_EXECUTOR))) {
-            case CURL:
-                try {
-                    Runtime.getRuntime().exec(Executor.CURL.getCommand(alarm));
-                } catch (IOException ex) {
-                    throw new BosMonTriggerExecutionException("Fehler bei der Curl-Ausführung", ex);
+        Executor executor = Executor.valueOf(Config.get(Config.KEY_EXECUTOR));
+        String[] commandArray = executor.getCommand(alarm);
+        try {
+            String completeCommand = new String();
+            for (String string : commandArray) {
+                completeCommand += (string + " ");
+            }
+            LOG.info(completeCommand);
+            Process p = Runtime.getRuntime().exec(commandArray);
+            try {
+                Thread.sleep(250L);
+                while (p.isAlive()) {
+                    Thread.sleep(250L);
+                    LOG.info("Sending data not yet finished");
                 }
-                break;
-            case BOSMON_DIAL:
-                try {
-                    Runtime.getRuntime().exec(Executor.BOSMON_DIAL.getCommand(alarm));
-                } catch (IOException ex) {
-                    throw new BosMonTriggerExecutionException("Fehler bei der BosMonDial-Ausführung", ex);
-                }
-                break;
-            default:
+            } catch (InterruptedException ex) {
+                Logger.getLogger(BosMonExecutor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            LOG.info(String.format("%s command exit value: %s", executor.name(), p.exitValue()));
+        } catch (IOException ex) {
+            throw new BosMonTriggerExecutionException(String.format("Fehler bei der %s Ausführung", executor.name()), ex);
         }
 
     }
