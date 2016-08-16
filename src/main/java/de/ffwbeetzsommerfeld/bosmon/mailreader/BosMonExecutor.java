@@ -1,5 +1,6 @@
 package de.ffwbeetzsommerfeld.bosmon.mailreader;
 
+import de.ffwbeetzsommerfeld.bosmon.mailreader.util.Executor;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -89,17 +90,26 @@ public class BosMonExecutor implements Runnable {
      * Ausführung von BosMonDial aufgetreten ist.
      */
     private void callBosMon(Alarm alarm) throws BosMonTriggerExecutionException {
-        String[] bosMonDialCommand = {Config.get(Config.KEY_BOSMON_DIAL_EXE),
-            "-username " + Config.get(Config.KEY_BOSMON_USER),
-            "-password " + Config.get(Config.KEY_BOSMON_PASS),
-            "-alertaddress " + alarm.getRic(),
-            "-alertmessage " + alarm.getMessage(),
-            "-close"};
-        try {
-            Runtime.getRuntime().exec(bosMonDialCommand);
-        } catch (IOException ex) {
-            throw new BosMonTriggerExecutionException("Fehler bei der BosMonDial-Ausführung", ex);
+        /* Determine whether to run curl or bosmon */
+
+        switch (Executor.valueOf(Config.get(Config.KEY_EXECUTOR))) {
+            case CURL:
+                try {
+                    Runtime.getRuntime().exec(Executor.CURL.getCommand(alarm));
+                } catch (IOException ex) {
+                    throw new BosMonTriggerExecutionException("Fehler bei der Curl-Ausführung", ex);
+                }
+                break;
+            case BOSMON_DIAL:
+                try {
+                    Runtime.getRuntime().exec(Executor.BOSMON_DIAL.getCommand(alarm));
+                } catch (IOException ex) {
+                    throw new BosMonTriggerExecutionException("Fehler bei der BosMonDial-Ausführung", ex);
+                }
+                break;
+            default:
         }
+
     }
 
     /**

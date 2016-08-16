@@ -81,6 +81,17 @@ public class Config {
      * Key für die Konfigurationseinstellung ob bei jedem Alarm eine spezielle RIC forciert werden soll
      */
     public static final String KEY_FORCE_RIC = "FORCE_RIC";
+    
+    /**
+     * Key für die Konfigurationseinstellung wo sich die curl exe befindet
+     */
+    public static final String KEY_CURL_EXE = "CURL_EXE";
+    
+    /**
+     * Key für die Konfigurationseinstellung ob curl oder bosmon dial verwendet werden soll
+     */
+    public static final String KEY_EXECUTOR = "EXECUTOR";
+
 
     private Config() {
 
