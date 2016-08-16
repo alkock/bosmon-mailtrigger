@@ -144,8 +144,8 @@ public class Alarm {
         stringBuilder.append("\n").append("\n").append("--------------------------------------").append("\n");
         stringBuilder.append("Alarm ").append(this.getAlarmTime()).append("\n");
         stringBuilder.append("RIC: ").append(this.getRic()).append("\n");
-        stringBuilder.append("Meldung: ").append(this.getMessage()).append("\n").append("\n");
-        stringBuilder.append("--------------------------------------").append("\n");
+        stringBuilder.append("Meldung: ").append(this.getMessage()).append("\n");
+        stringBuilder.append("--------------------------------------").append("\n").append("\n");
         return stringBuilder.toString();
     }
 }
