@@ -1,6 +1,7 @@
 package de.ffwbeetzsommerfeld.bosmon.mailreader;
 
-import de.ffwbeetzsommerfeld.bosmon.mailreader.util.Executor;
+import de.ffwbeetzsommerfeld.bosmon.mailreader.execute.Executor;
+import de.ffwbeetzsommerfeld.bosmon.mailreader.execute.HttpClientExecuter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,6 +10,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 /**
  * Diese Klasse ist für die Weiterleitung der Alarme zur BosMon Instanz
@@ -90,30 +107,8 @@ public class BosMonExecutor implements Runnable {
      * Ausführung von BosMonDial aufgetreten ist.
      */
     private void callBosMon(Alarm alarm) throws BosMonTriggerExecutionException {
-        /* Determine whether to run curl or bosmon */
-        Executor executor = Executor.valueOf(Config.get(Config.KEY_EXECUTOR));
-        String[] commandArray = executor.getCommand(alarm);
-        try {
-            String completeCommand = new String();
-            for (String string : commandArray) {
-                completeCommand += (string + " ");
-            }
-            LOG.info(completeCommand);
-            Process p = Runtime.getRuntime().exec(commandArray);
-            try {
-                Thread.sleep(250L);
-                while (p.isAlive()) {
-                    Thread.sleep(250L);
-                    LOG.info("Sending data not yet finished");
-                }
-            } catch (InterruptedException ex) {
-                Logger.getLogger(BosMonExecutor.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            LOG.info(String.format("%s command exit value: %s", executor.name(), p.exitValue()));
-        } catch (IOException ex) {
-            throw new BosMonTriggerExecutionException(String.format("Fehler bei der %s Ausführung", executor.name()), ex);
-        }
-
+        Executor executor = new HttpClientExecuter();
+        executor.execute(alarm);
     }
 
     /**

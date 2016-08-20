@@ -73,14 +73,21 @@ public class Postman implements AlarmHeadquarter {
                         boolean isRead = message.isSet(Flags.Flag.SEEN);
 
                         if (!isRead) {
+                            LOG.log(Level.INFO, "Nachrichtentyp: {0}", message.getDataHandler().getContentType());
                             /* Die Nachricht wurde noch nicht gelesen, scheint also neu zu sein */
                             try {
                                 Alarm alarmMail = new Alarm();
                                 for (Address address : message.getFrom()) {
                                     alarmMail.setFromAddress(address.toString());
                                 }
-                                alarmMail.setMessage((String) message.getContent());
-                                alarmMail.setRic((String) message.getSubject());
+                                if (message.getContent() instanceof Multipart) {
+                                    Multipart mP = (Multipart) message.getContent();
+                                    alarmMail.setMessage(handleMultipart(mP));
+                                } else {
+                                    alarmMail.setMessage((String) message.getContent());
+                                }
+
+                                alarmMail.setRic((String) (message.getSubject().length() > 7 ? message.getSubject().substring(0, 7) : message.getSubject()));
                                 alarmMail.setAlarmTime(message.getSentDate());
                                 alarmMails.add(alarmMail);
                             } catch (IOException ex) {
@@ -104,13 +111,24 @@ public class Postman implements AlarmHeadquarter {
         this.deliverAlarms(alarmMails);
     }
 
+    public static String handleMultipart(Multipart multipart) throws MessagingException, IOException {
+
+        for (int i = 0, n = multipart.getCount(); i < n; i++) {
+            Part p = (multipart.getBodyPart(i));
+            if(p.getContentType().toLowerCase().substring(0, 10).equals("text/plain")){
+                return (String) p.getContent();
+            }
+        }
+        return "Kein Alarmtext";
+    }
+
     @Override
     public void deliverAlarms(List<Alarm> alarms) {
         if (alarms != null && !alarms.isEmpty()) {
             for (Recipient recipient : recipients) {
                 recipient.deliver(alarms);
             }
-        }else{
+        } else {
             LOG.fine("Keine neuen Alarme empfangen...");
         }
     }

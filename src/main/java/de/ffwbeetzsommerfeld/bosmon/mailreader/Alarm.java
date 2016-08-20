@@ -5,11 +5,11 @@ import java.util.Objects;
 
 /**
  * Diese Klasse beschreibt einen eingehenden Alarm
- * 
+ *
  * @author jhomuth
  */
 public class Alarm {
-    
+
     /**
      * Die RIC für den Alarm
      */
@@ -29,6 +29,30 @@ public class Alarm {
      * Die Alarmierungszeit
      */
     private Date alarmTime;
+
+    /**
+     * Die Unteradress/Funktion des Alarms
+     * Default: "b"
+     */
+    private String subAddress = "b";
+
+    /**
+     * Get the value of subAddress
+     *
+     * @return the value of subAddress
+     */
+    public String getSubAddress() {
+        return subAddress;
+    }
+
+    /**
+     * Set the value of subAddress
+     *
+     * @param subAddress new value of subAddress
+     */
+    public void setSubAddress(String subAddress) {
+        this.subAddress = subAddress;
+    }
 
     /**
      * Get the value of alarmTime
@@ -88,14 +112,14 @@ public class Alarm {
     }
 
     /**
-     * Get the value of ric.
-     * If a ric was forced via the configuration, this ric is always returned
+     * Get the value of ric. If a ric was forced via the configuration, this ric
+     * is always returned
      *
      * @return the value of subject
      */
     public String getRic() {
         String forcedRic = Config.get(Config.KEY_FORCE_RIC);
-        if(forcedRic != null && !forcedRic.trim().isEmpty()){
+        if (forcedRic != null && !forcedRic.trim().isEmpty()) {
             return forcedRic;
         }
         return ric;
