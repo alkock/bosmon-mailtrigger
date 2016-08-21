@@ -52,7 +52,7 @@ public class HttpClientExecuter implements Executor {
             nvps.add(new BasicNameValuePair("address", alarm.getRic()));
             nvps.add(new BasicNameValuePair("flags", "0"));
             nvps.add(new BasicNameValuePair("function", "b"));
-            nvps.add(new BasicNameValuePair("message", alarm.getMessage()));
+            nvps.add(new BasicNameValuePair("message", alarm.getMessage().replace("\n", "|").replace("\r", "|")));
             httpPost.setEntity(new UrlEncodedFormEntity(nvps));
             bosMonResponse = httpclient.execute(httpPost);
 
