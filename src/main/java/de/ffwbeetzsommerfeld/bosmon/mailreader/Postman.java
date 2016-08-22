@@ -26,10 +26,9 @@ public class Postman implements AlarmHeadquarter {
     private List<Recipient> recipients = new ArrayList<>();
 
     /**
-     * Diese Methode holt die Alarm-Emails ab.
+     * Diese Methode holt die Alarm-Emails ab und stellt Sie den Abonennten zu
+     * (Liste recipients)
      *
-     * @return Eine Liste von Alarmen die via Email empfangen wurden. Diese
-     * Liste kann auch leer sein, aber niemals null
      * @throws MessagingException im Fall das die Emails nicht abgeholt werden
      * konnten.
      */
@@ -111,6 +110,15 @@ public class Postman implements AlarmHeadquarter {
         this.deliverAlarms(alarmMails);
     }
 
+    /**
+     * Versucht aus der Multipart Mail den "normalen" Textteil zu finden.
+     * Wird der erste Typ text/plain gefunden wird dieser zurück gegeben.
+     * Wenn kein Text/Plain gefunden wurde, wird "Kein Alarmtext" returned.
+     * @param multipart
+     * @return
+     * @throws MessagingException
+     * @throws IOException 
+     */
     public static String handleMultipart(Multipart multipart) throws MessagingException, IOException {
 
         for (int i = 0, n = multipart.getCount(); i < n; i++) {
@@ -122,6 +130,9 @@ public class Postman implements AlarmHeadquarter {
         return "Kein Alarmtext";
     }
 
+    /**
+     * @see AlarmHeadquarter#deliverAlarms(java.util.List) 
+     */
     @Override
     public void deliverAlarms(List<Alarm> alarms) {
         if (alarms != null && !alarms.isEmpty()) {

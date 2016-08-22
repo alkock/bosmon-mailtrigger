@@ -9,18 +9,22 @@
     
     <name>bosmon-mailreader</name>
     
+    
+    <!-- Liste der Entwickler dieser Software. Sollten Sie an der Software
+         mitgearbeitet haben, tragen Sie sich hier ein. -->
     <developers>
         <developer>
             <name>Johannes Homuth</name>
             <organization>Feuerwehr Stadt Kremmen - Loeschzug 2 (Beetz-Sommerfeld)</organization>
             <organizationUrl>http://ffw-beetz-sommerfeld.de</organizationUrl>
             <roles>
+                <role>Initiator</role>
                 <role>Entwickler</role>
             </roles>
         </developer>
     </developers>
     
-    <!-- Für Release Zwecke -->
+    <!-- Für Release Zwecke - und releasen mache nur ich :-) -->
     <scm>
         <connection>scm:git:https://github.com/hannehomuth/bosmon-mailtrigger.git</connection>
     </scm>
@@ -34,7 +38,6 @@
         <enforced.java.version>[1.8,1.9]</enforced.java.version>
         <enforced.mvn.version>[3.3.3]</enforced.mvn.version>
     </properties>
-    
     
     <dependencyManagement>
         <dependencies>
