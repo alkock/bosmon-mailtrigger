@@ -1,5 +1,6 @@
 package de.ffwbeetzsommerfeld.bosmon.mailreader;
 
+import de.ffwbeetzsommerfeld.bosmon.mailreader.config.Config;
 import java.util.Date;
 import java.util.Objects;
 

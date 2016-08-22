@@ -1,5 +1,7 @@
 package de.ffwbeetzsommerfeld.bosmon.mailreader;
 
+import de.ffwbeetzsommerfeld.bosmon.mailreader.config.Config;
+import de.ffwbeetzsommerfeld.bosmon.mailreader.config.ConfigurationException;
 import de.ffwbeetzsommerfeld.bosmon.mailreader.util.Recipient;
 import java.io.File;
 import java.util.List;
@@ -18,7 +20,12 @@ public class BosMonMailBrigde implements Recipient {
     private static final Logger LOG = Logger.getLogger(BosMonMailBrigde.class.getSimpleName());
 
     public static void main(String[] args) {
-        Config.init(new File(args[0]));
+        try {
+            Config.init(new File(args[0]));
+        } catch (ConfigurationException ex) {
+            LOG.log(Level.SEVERE, "Konfiguration nicht valide", ex);
+            System.exit(1);
+        }
         BosMonMailBrigde bridge = new BosMonMailBrigde();
         bridge.process();
 

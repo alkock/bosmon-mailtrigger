@@ -1,5 +1,6 @@
 package de.ffwbeetzsommerfeld.bosmon.mailreader;
 
+import de.ffwbeetzsommerfeld.bosmon.mailreader.config.Config;
 import com.sun.mail.imap.IMAPFolder;
 import de.ffwbeetzsommerfeld.bosmon.mailreader.util.Recipient;
 import java.io.IOException;
@@ -41,11 +42,10 @@ public class Postman implements AlarmHeadquarter {
         String password = Config.get(Config.KEY_PROP_IMAP_PASS);
         Properties props = System.getProperties();
         props.setProperty("mail.store.protocol", "imaps");
-        props.setProperty("mail.debug", Config.get(Config.KEY_MAIL_TRANSFER_DEBUG));
         Session session = Session.getDefaultInstance(props, null);
         Store store = session.getStore("imaps");
         try {
-            LOG.fine("Connecting to IMAP server: " + url);
+            LOG.log(Level.FINE, "Connecting to IMAP server: {0}", url);
             store.connect(url, username, password);
 
             String folderName = "INBOX";

@@ -1,8 +1,8 @@
 package de.ffwbeetzsommerfeld.bosmon.mailreader;
 
+import de.ffwbeetzsommerfeld.bosmon.mailreader.config.Config;
 import de.ffwbeetzsommerfeld.bosmon.mailreader.execute.Executor;
 import de.ffwbeetzsommerfeld.bosmon.mailreader.execute.HttpClientExecuter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,22 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 
 /**
  * Diese Klasse ist für die Weiterleitung der Alarme zur BosMon Instanz
