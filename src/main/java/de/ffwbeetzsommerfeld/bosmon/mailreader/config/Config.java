@@ -64,7 +64,7 @@ public class Config {
     /**
      * Key für die Konfigurationseinstellung der erlaubten Absender-Adresse
      */
-    @ConfigParam(mandatory = false)
+    @ConfigParam(mandatory = false, defaultValue = "")
     public static final String KEY_ALLOWED_SENDER = "ALLOWED_SENDER";
     /**
      * Key für die Konfigurationseinstellung ob Absender-Adressprüfung an oder
