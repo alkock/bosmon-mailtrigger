@@ -62,7 +62,7 @@ public class BosMonMailBrigde implements Recipient {
     @Override
     public void deliver(List<Alarm> alarms) {
         try {
-            LOG.info(String.format("%s Alarm%sempfangen... Starte Ausführung von BosMonDial", alarms.size(), alarms.size() == 1 ? " " : "e "));
+            LOG.info(String.format("%s Alarm%sempfangen...", alarms.size(), alarms.size() == 1 ? " " : "e "));
             BosMonExecutor bme = new BosMonExecutor(alarms);
             Thread t = new Thread(bme);
             t.start();
