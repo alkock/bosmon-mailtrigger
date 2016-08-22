@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.ffw-beetz-sommerfeld</groupId>
     <artifactId>bosmon-mailreader</artifactId>
@@ -7,15 +8,119 @@
     <packaging>jar</packaging>
     
     <name>bosmon-mailreader</name>
+    
+    <developers>
+        <developer>
+            <name>Johannes Homuth</name>
+            <organization>Feuerwehr Stadt Kremmen - Loeschzug 2 (Beetz-Sommerfeld)</organization>
+            <organizationUrl>http://ffw-beetz-sommerfeld.de</organizationUrl>
+            <roles>
+                <role>Entwickler</role>
+            </roles>
+        </developer>
+    </developers>
+    
+    <!-- Für Release Zwecke -->
+    <scm>
+        <connection>scm:git:https://github.com/hannehomuth/bosmon-mailtrigger.git</connection>
+    </scm>
+    
+    <!-- Eigenschaften dieses Projekts -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <!-- Forciere die Verwendung von Java 1.8 und Maven 3.3.3 -->
+        <enforced.java.version>[1.8,1.9]</enforced.java.version>
+        <enforced.mvn.version>[3.3.3]</enforced.mvn.version>
     </properties>
+    
+    
+    <dependencyManagement>
+        <dependencies>
+            <!-- Für das auslesen der Mails -->
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>1.4.7</version>
+            </dependency>
+            
+            <!-- Für die Weitergabe der Alarme an BosMon via HTTP -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.2</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
+    
+    
+    <dependencies>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+    </dependencies>
+
 
     <build>
         <plugins>
+            <!-- Forciere ein paar Regeln (falls sich ein anderer neben mir
+            erbarmen sollte daran mitzuarbeiten -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-project-java-version</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <ignoreCache>true</ignoreCache>
+                            <fail>true</fail>
+                            <rules>                                
+                                <requireJavaVersion>
+                                    <version>${enforced.java.version}</version>
+                                    <message>
+<![CDATA[
+#############################################################
+# Falsche Java Version!
+#############################################################
+# Bitte baue mit der in Property "enforced.java.version"
+# angegebenen Java Version
+#############################################################]]>
+                                    </message>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>${enforced.mvn.version}</version>
+                                    <message>
+<![CDATA[
+#############################################################
+# Falsche Maven Version
+#############################################################
+# Bitte baue mit der in Property "enforced.mvn.version" 
+# angegebenen Maven Version
+###############################################################
+]]>
+                                    </message>
+                                </requireMavenVersion>                                                                       
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>                        
+                    </execution>                                       
+                </executions>                    
+            </plugin>    
             
+            
+            <!-- Erzeuge ein ausführbares JAR File mit korrekten Manifest-Einträgen -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
@@ -30,8 +135,8 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <id>make-assembly</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -40,17 +145,5 @@
             </plugin>
         </plugins>
     </build>
-    <dependencies>
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4.7</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.2</version>
-        </dependency>
-    </dependencies>
 
 </project>
