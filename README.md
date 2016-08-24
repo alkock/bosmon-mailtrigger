@@ -45,11 +45,13 @@ Um Alarme via Mail in Bosmon empfangen zu können braucht ihr folgendes:
 
 ## Installation
 Aktuell gibt es noch keinen Installer oder ähnliches. Wird's wahrscheinlich auch nie geben.
-Ihr müsst euch einfach unter dem Punkt "Releases" hier auf GitHub die letzte Version runterladen und bei euch irgendwo entpacken.
+Ihr müsst euch einfach unter dem Punkt <a href=https://github.com/hannehomuth/bosmon-mailtrigger/releases>Releases</a> die letzte Version runterladen und bei euch irgendwo entpacken.
 Danach editiert ihr die Konfigurationsdatei nach euren Bedingungen (siehe Punkt Konfiguration) und startet das Programm.
 
 Dazu geht ihr in Windows auf die Kommandozeile (cmd) und tippt folgenden Befehl ein.
-java -jar Pfad\zur\jar\datei\bosmon-mailreader-<version>-jar-with-dependencies.jar \Pfad\zur\Konfigurationsdatei\bosmailreader.properties
+
+```java -jar Pfad\zur\jar\datei\bosmon-mailreader-<version>-jar-with-dependencies.jar \Pfad\zur\Konfigurationsdatei\bosmailreader.properties```
+
 
 Es empfiehlt sich natürlich das Programm als Dienst/Service starten zu lassen. Wer sich damit auskennt kann das mal probieren, ich habe das
 allerdings noch nicht getestet.
