@@ -34,15 +34,25 @@ Sollte jemand von euch diesen Code zu einem Plugin adaptieren wollen, so tut euc
 ## Was wird benötigt?
 Um Alarme via Mail in Bosmon empfangen zu können braucht ihr folgendes:
 <ul>
+<li>Java JRE in Version 8</li>
 <li>BosMon (wer hätte das gedacht)</li>
 <li>Ein Email Konto das ausschließlich für das Empfangen von AlarmEmails vorhanden ist</li>
 <ul><li>Achtung: jede eingehende Email an die auszuwertende Adresse wird ohne Rückfrage sofort nach der Verarbeitung gelöscht</li></ul>
 <ul><li>Ferner sollte dieses Email Konto auch nirgends ausgelesen werden! Also nur durch dieses Programm bearbeitet werden</li></ul>
 <li>Eine automatische Alarmierung via Mail (entweder von der Leitstelle oder von einer anderen BosMon Instanz (zu empfehlen)</li>
+<li>Grundlegende Kenntnisse mit der Windows Kommandozeile</li>
 </ul>
 
 ## Installation
-TBD:
+Aktuell gibt es noch keinen Installer oder ähnliches. Wird's wahrscheinlich auch nie geben.
+Ihr müsst euch einfach unter dem Punkt "Releases" hier auf GitHub die letzte Version runterladen und bei euch irgendwo entpacken.
+Danach editiert ihr die Konfigurationsdatei nach euren Bedingungen (siehe Punkt Konfiguration) und startet das Programm.
+
+Dazu geht ihr in Windows auf die Kommandozeile (cmd) und tippt folgenden Befehl ein.
+java -jar Pfad\zur\jar\datei\bosmon-mailreader-<version>-jar-with-dependencies.jar \Pfad\zur\Konfigurationsdatei\bosmailreader.properties
+
+Es empfiehlt sich natürlich das Programm als Dienst/Service starten zu lassen. Wer sich damit auskennt kann das mal probieren, ich habe das
+allerdings noch nicht getestet.
 
 ## Konfiguration
 Dieses Programm ist ein Kommandozeilentool welches keine Oberfläche besitzt.
@@ -70,13 +80,13 @@ Tabelle erläutert.
 |DEBUG_MAIL|false|nein|Log-Level für das Abholen der Emails. (Für Testzwecke)
 |FORCE_RIC|-|nein|Forciere bei der Alarmierung immer die hier eingegebene RIC Adresse. Das ist aktuell eher ein Workaround für Email-Formate die nicht dem entsprechen was ich mir so erwartet habe.
 |LINE_SEPARATOR|\||nein|Wenn der Email-Text aus mehreren Zeilen besteht wurde bei mir immer nur die erste Zeile an BosMon übertragen. Daher wandle ich den Text vorher um und entferne alle Zeilenumbrüche durch das angegebene Zeichen
-Konfigurationsdatei
-Alle Properties beschreiben
-RIC Adresse forcieren
 
 ##Arbeitsweise
 TBD:
-Email auslesen, via BosMonDial weiterleiten
+Email auslesen, via Http weiterleiten (alles im X Sekunden Interval)
+
+##Support
+Falls ihr Hilfe benötigt, Anregungen oder Fragen habt, so könnt ihr mich gerne unter it-support(at)ffw-beetz-sommerfeld.de kontaktieren.
 
 ##Offene Bugs/TODOs
 <ul>
