@@ -1,3 +1,4 @@
+
 # bosmon-mailtrigger
 
 Das Programm bosmon-mailtrigger (Arbeitsname) stellt eine Brücke von einem IMAP-Client zu <a href=http://www.bosmon.de>BosMon</a> dar.
@@ -37,7 +38,8 @@ Um Alarme via Mail in Bosmon empfangen zu können braucht ihr folgendes:
 <li>Java JRE in Version 8</li>
 <li>BosMon (wer hätte das gedacht)</li>
 <li>Ein Email Konto das ausschließlich für das Empfangen von AlarmEmails vorhanden ist</li>
-<ul><li>Achtung: jede eingehende Email an die auszuwertende Adresse wird ohne Rückfrage sofort nach der Verarbeitung gelöscht</li></ul>
+<ul><li>~~Achtung: jede eingehende Email an die auszuwertende Adresse wird ohne Rückfrage sofort nach der Verarbeitung gelöscht~~
+Ab Version 0.6 werden die Mails nur als gelesen markiert</li></ul>
 <ul><li>Ferner sollte dieses Email Konto auch nirgends ausgelesen werden! Also nur durch dieses Programm bearbeitet werden</li></ul>
 <li>Eine automatische Alarmierung via Mail (entweder von der Leitstelle oder von einer anderen BosMon Instanz (zu empfehlen)</li>
 <li>Grundlegende Kenntnisse mit der Windows Kommandozeile</li>
@@ -97,3 +99,4 @@ Falls ihr Hilfe benötigt, Anregungen oder Fragen habt, so könnt ihr mich gerne
 <li>mehrere erlaubte Absender-Adressen erlauben</li>
 <li>Multipart Mails unterstützen (Bereits bedingt implementiert. Eventuell Anpassungen notwendig)</li>
 </ul>
+
