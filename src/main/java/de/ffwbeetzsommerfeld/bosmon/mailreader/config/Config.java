@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Klasse dient zum holen von Konfigurationsparametern
@@ -108,7 +108,7 @@ public class Config {
     /**
      * Logger für diese Klasse
      */
-    private static final Logger LOG = Logger.getLogger(Config.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(Config.class);
 
     /**
      * Don't instanciate this class
@@ -132,7 +132,7 @@ public class Config {
             printConfiguration();
 
         } catch (IOException ex) {
-            Logger.getLogger(Postman.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.error("", ex);
             System.exit(1);
         }
     }
@@ -174,7 +174,7 @@ public class Config {
                             }
                         }
                     } catch (IllegalArgumentException | IllegalAccessException ex) {
-                        LOG.log(Level.SEVERE, null, ex);
+                        LOG.error("", ex);
                     }
                 }
             }
@@ -191,14 +191,14 @@ public class Config {
         builder.append("=======================").append("\n");
         for (Object object : bosMonMailReaderProps.keySet()) {
             String key = (String) object;
-            builder.append(pad(key+": ",30," ")).append(bosMonMailReaderProps.get(key)).append("\n");
+            builder.append(pad(key + ": ", 30, " ")).append(bosMonMailReaderProps.get(key)).append("\n");
             builder.append(pad("-", 60, "-")).append("\n");
         }
         builder.append("\n");
         LOG.info(builder.toString());
     }
 
-    public static String pad(String str, int size,String padChar) {
+    public static String pad(String str, int size, String padChar) {
         StringBuffer padded = new StringBuffer(str);
         while (padded.length() < size) {
             padded.append(padChar);

@@ -8,8 +8,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Diese Klasse ist für die Weiterleitung der Alarme zur BosMon Instanz
@@ -35,7 +35,7 @@ public class BosMonExecutor implements Runnable {
     /**
      * Logger für diese Klasse
      */
-    private static final Logger LOG = Logger.getLogger(BosMonExecutor.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(BosMonExecutor.class);
 
     /**
      * Konstruktor
@@ -64,19 +64,19 @@ public class BosMonExecutor implements Runnable {
      * @param alarm Der weiterzuleitende Alarm
      */
     private void fireAlarm(Alarm alarm) {
-        LOG.log(Level.INFO, "Verarbeite Alarm {0}", alarm.toString());
+        LOG.info("Verarbeite Alarm {}", alarm.toString());
         try {
             AlarmExecutionStatus state = this.isAllowedToFire(alarm);
             if (state.getIsAllowedToBeFired()) {
                 this.callBosMon(alarm);
             } else {
-                LOG.warning("Alarm wird nicht weitergeleitet.");
+                LOG.warn("Alarm wird nicht weitergeleitet.");
                 for (AlarmValidationFailure failure : state.getValidationErrors()) {
-                    LOG.warning(failure.getValidationMessage());
+                    LOG.warn(failure.getValidationMessage());
                 }
             }
         } catch (BosMonTriggerExecutionException ex) {
-            LOG.log(Level.SEVERE, "Alarm konnte nicht an BosMon weitergereicht werden", ex);
+            LOG.error("Alarm konnte nicht an BosMon weitergereicht werden", ex);
         } finally {
             this.storeAlarm(alarm);
         }

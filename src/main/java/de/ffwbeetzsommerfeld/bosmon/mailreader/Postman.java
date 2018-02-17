@@ -9,10 +9,10 @@ import java.util.List;
 
 import javax.mail.*;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import de.ffwbeetzsommerfeld.bosmon.mailreader.util.AlarmHeadquarter;
 import javax.mail.search.FlagTerm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Diese Klasse bietet die grundsätzliche Funktionalität um Email abzuholen und
@@ -22,7 +22,7 @@ import javax.mail.search.FlagTerm;
  */
 public class Postman implements AlarmHeadquarter {
 
-    private static final Logger LOG = Logger.getLogger(Postman.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(Postman.class);
 
     private List<Recipient> recipients = new ArrayList<>();
 
@@ -45,7 +45,7 @@ public class Postman implements AlarmHeadquarter {
         Session session = Session.getDefaultInstance(props, null);
         Store store = session.getStore("imaps");
         try {
-            LOG.log(Level.FINE, "Connecting to IMAP server: {0}", url);
+            LOG.trace("Connecting to IMAP server: {}", url);
             store.connect(url, username, password);
 
             String folderName = "INBOX";
@@ -68,7 +68,7 @@ public class Postman implements AlarmHeadquarter {
                     boolean isRead = message.isSet(Flags.Flag.SEEN);
 
                     if (!isRead) {
-                        LOG.log(Level.INFO, "Nachrichtentyp: {0}", message.getDataHandler().getContentType());
+                        LOG.info("Nachrichtentyp: {}", message.getDataHandler().getContentType());
                         /* Die Nachricht wurde noch nicht gelesen, scheint also neu zu sein */
                         String fromMailAddress = message.getFrom()[0].toString();
                         Boolean foundValidFrom = Boolean.TRUE;
@@ -100,11 +100,11 @@ public class Postman implements AlarmHeadquarter {
                                 alarmMail.setAlarmTime(message.getSentDate());
                                 alarmMails.add(alarmMail);
                             } catch (IOException ex) {
-                                Logger.getLogger(Postman.class.getName()).log(Level.SEVERE, null, ex);
+                               LOG.error("",ex);
                             }
 
                         } else {
-                            LOG.log(Level.WARNING, "Illegal sender detected ({0})", fromMailAddress);
+                            LOG.warn("Illegal sender detected ({})", fromMailAddress);
                             message.setFlag(Flags.Flag.FLAGGED, Boolean.TRUE);
                         }
                         message.setFlag(Flags.Flag.SEEN, Boolean.TRUE);
@@ -155,7 +155,7 @@ public class Postman implements AlarmHeadquarter {
                 recipient.deliver(alarms);
             }
         } else {
-            LOG.fine("Keine neuen Alarme empfangen...");
+            LOG.trace("Keine neuen Alarme empfangen...");
         }
     }
 

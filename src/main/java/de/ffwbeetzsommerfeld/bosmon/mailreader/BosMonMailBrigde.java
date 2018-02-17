@@ -5,9 +5,9 @@ import de.ffwbeetzsommerfeld.bosmon.mailreader.config.ConfigurationException;
 import de.ffwbeetzsommerfeld.bosmon.mailreader.util.Recipient;
 import java.io.File;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.MessagingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -17,13 +17,13 @@ public class BosMonMailBrigde implements Recipient {
 
     private Postman postman;
 
-    private static final Logger LOG = Logger.getLogger(BosMonMailBrigde.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(BosMonMailBrigde.class);
 
     public static void main(String[] args) {
         try {
             Config.init(new File(args[0]));
         } catch (ConfigurationException ex) {
-            LOG.log(Level.SEVERE, "Konfiguration nicht valide", ex);
+            LOG.error("Konfiguration nicht valide", ex);
             System.exit(1);
         }
         BosMonMailBrigde bridge = new BosMonMailBrigde();
@@ -41,15 +41,15 @@ public class BosMonMailBrigde implements Recipient {
         while (true) {
             try {
                 postman.fetchMailsAndQuitConnection();
-                LOG.log(Level.FINER, String.format("Process finished.... Waiting %s Seconds", pollingSeconds));
+                LOG.trace(String.format("Process finished.... Waiting %s Seconds", pollingSeconds));
                 try {
                     Thread.sleep(1000 * pollingSeconds);
                 } catch (InterruptedException ex) {
-                    LOG.log(Level.WARNING, "BosMonBrigdeProcess interrupted... Bye");
+                    LOG.warn("BosMonBrigdeProcess interrupted... Bye");
                     System.exit(1);
                 }
             } catch (MessagingException me) {
-                LOG.log(Level.SEVERE, "Konnte Emails nicht abrufen", me);
+                LOG.error("Konnte Emails nicht abrufen", me);
             }
         }
     }
@@ -68,7 +68,7 @@ public class BosMonMailBrigde implements Recipient {
             t.start();
 
         } catch (Throwable e) {
-            LOG.log(Level.SEVERE, "Fehler bei der Verarbeitung", e);
+            LOG.error("Fehler bei der Verarbeitung", e);
         }
 
     }

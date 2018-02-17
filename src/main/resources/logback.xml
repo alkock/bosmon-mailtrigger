@@ -1,0 +1,61 @@
+<!-- Note: This file is automatically includes within the jar file during build
+process. Changes on this file will not be automatically change the log behavior
+on next run (without build)! 
+If you want to apply changes you need to start the application with
+parameter "-Dlogback.configurationFile=/path/to/alternative/logback.xml"
+-->
+<configuration>
+
+    <!-- Log-Konfiguration für Standart-Out -->
+    
+    <!-- Gebe Info Meldungen in normaler Farbe aus -->
+    <appender name="STDOUT_INFO" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- Gebe nur Lognachrichten mit dem Level INFO aus -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>[%-6level] - %d{HH:mm:ss.SSS} - [%-9thread] - %logger{0}:%line - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- Gebe WARN/ERROR Meldungen in Farbe aus -->
+    <appender name="STDOUT_WARN" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- Gebe nur Lognachrichten mit dem Level WARN oder "schlimmer" aus -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <!-- Benutze Jansi für Farbausgabe unter Windows -->
+        <withJansi>true</withJansi>
+        <encoder>
+            <pattern>%highlight([%-6level] - %d{HH:mm:ss.SSS} - [%-9thread] - %logger{0}:%line - %msg%n)</pattern>
+        </encoder>
+    </appender>
+  
+    <!-- Log-Konfiguration für die Log-Datei(debug) -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>bosmon-mailreader.log</file>
+        <!-- Behalte die Dateien maximal 7 Tage -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>bosmon-mailreader-debug.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- keep 7 days' worth of history -->
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%-5level] %d{HH:mm:ss.SSS} - [%thread] - %logger{1} - %msg%n</pattern>
+        </encoder>
+    </appender> 
+  
+    <!-- Setze das Log-Level auf Debug. Auf StdOut wird allerdings nur < INFO geloggt (siehe Filter) -->
+    <root level="DEBUG">
+        <appender-ref ref="FILE" />    
+        <appender-ref ref="STDOUT_WARN" />    
+        <appender-ref ref="STDOUT_INFO" />    
+    </root>  
+  
+</configuration>
