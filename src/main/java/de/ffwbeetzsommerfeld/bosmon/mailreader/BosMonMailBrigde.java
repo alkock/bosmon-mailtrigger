@@ -4,8 +4,8 @@ import de.ffwbeetzsommerfeld.bosmon.mailreader.config.Config;
 import de.ffwbeetzsommerfeld.bosmon.mailreader.config.ConfigurationException;
 import de.ffwbeetzsommerfeld.bosmon.mailreader.util.Recipient;
 import java.io.File;
+import java.util.Date;
 import java.util.List;
-import javax.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +19,8 @@ public class BosMonMailBrigde implements Recipient {
 
     private static final Logger LOG = LoggerFactory.getLogger(BosMonMailBrigde.class);
 
+    public static Date lastSuccessFullExection;
+
     public static void main(String[] args) {
         try {
             Config.init(new File(args[0]));
@@ -27,7 +29,18 @@ public class BosMonMailBrigde implements Recipient {
             System.exit(1);
         }
         BosMonMailBrigde bridge = new BosMonMailBrigde();
-        bridge.process();
+        int pollingSeconds = new Integer(Config.get(Config.KEY_POLLING_SECONDS));
+        while (true) {
+            LOG.info("Going to fetch mails from server");
+            bridge.process();
+            LOG.trace(String.format("Process finished.... Waiting %s Seconds", pollingSeconds));
+            try {
+                Thread.sleep(1000 * pollingSeconds);
+            } catch (InterruptedException ex) {
+                LOG.warn("BosMonBrigdeProcess interrupted... Bye");
+                System.exit(1);
+            }
+        }
 
     }
 
@@ -37,21 +50,12 @@ public class BosMonMailBrigde implements Recipient {
     }
 
     public void process() {
-        int pollingSeconds = new Integer(Config.get(Config.KEY_POLLING_SECONDS));
-        while (true) {
-            try {
-                postman.fetchMailsAndQuitConnection();
-                LOG.trace(String.format("Process finished.... Waiting %s Seconds", pollingSeconds));
-                try {
-                    Thread.sleep(1000 * pollingSeconds);
-                } catch (InterruptedException ex) {
-                    LOG.warn("BosMonBrigdeProcess interrupted... Bye");
-                    System.exit(1);
-                }
-            } catch (MessagingException me) {
-                LOG.error("Konnte Emails nicht abrufen", me);
-            }
+        try {
+            postman.fetchMailsAndQuitConnection();
+        } catch (Exception me) {
+            LOG.error("Konnte Emails nicht abrufen", me);
         }
+
     }
 
     /**
