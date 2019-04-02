@@ -104,6 +104,12 @@ public class Config {
      */
     @ConfigParam(mandatory = false, defaultValue = "|")
     public static final String KEY_LINE_SEPARATOR = "LINE_SEPARATOR";
+    
+    /**
+     * Key für die Konfigurationseinstellung welcher Zeichensatz verwendet werden soll
+     */
+    @ConfigParam(mandatory = false, defaultValue = "UTF-8")
+    public static final String KEY_CHARSET = "CHARSET";
 
     /**
      * Logger für diese Klasse

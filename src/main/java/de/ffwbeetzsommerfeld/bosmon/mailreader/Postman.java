@@ -92,8 +92,10 @@ public class Postman implements AlarmHeadquarter {
                                 if (message.getContent() instanceof Multipart) {
                                     Multipart mP = (Multipart) message.getContent();
                                     alarmMail.setMessage(handleMultipart(mP));
+                                    LOG.debug("Nachrichtentext (Multipart): "+alarmMail.getMessage());
                                 } else {
                                     alarmMail.setMessage((String) message.getContent());
+                                    LOG.debug("Nachrichtentext (Singlepart): "+alarmMail.getMessage());
                                 }
 
                                 alarmMail.setRic((String) (message.getSubject().length() > 7 ? message.getSubject().substring(0, 7) : message.getSubject()));

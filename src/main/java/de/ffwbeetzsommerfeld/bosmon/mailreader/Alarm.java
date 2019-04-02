@@ -107,7 +107,7 @@ public class Alarm {
      */
     public void setMessage(String message) {
         if (message != null) {
-            message = message.trim();
+            message = message.trim();            
         }
         this.message = message;
     }
