@@ -84,6 +84,7 @@ Tabelle erläutert.
 |DEBUG_MAIL|false|nein|Log-Level für das Abholen der Emails. (Für Testzwecke)
 |FORCE_RIC|-|nein|Forciere bei der Alarmierung immer die hier eingegebene RIC Adresse. Das ist aktuell eher ein Workaround für Email-Formate die nicht dem entsprechen was ich mir so erwartet habe.
 |LINE_SEPARATOR|\||nein|Wenn der Email-Text aus mehreren Zeilen besteht wurde bei mir immer nur die erste Zeile an BosMon übertragen. Daher wandle ich den Text vorher um und entferne alle Zeilenumbrüche durch das angegebene Zeichen
+|CHARSET|UTF-8||nein|Zeichensatz mit dem der HTTP Request codiert wird.
 
 ##Arbeitsweise
 TBD:
