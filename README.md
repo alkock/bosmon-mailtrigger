@@ -1,3 +1,8 @@
+# Projekt eingestellt!
+
+Ich bin leider nicht mehr in der Feuerwehr tätig. Ich kann leider keinen Support mehr dafür leisten.
+Bitte schreiben Sie keine Mails mehr mit Anfragen an mich, ich kann diese nicht mehr beantworten.
+In der Retroperspektive war das sowieso nie eine gute Idee. Verwendet die supporteten Eingangskanäle von BosMon!
 
 # bosmon-mailtrigger
 
@@ -90,8 +95,6 @@ Tabelle erläutert.
 TBD:
 Email auslesen, via Http weiterleiten (alles im X Sekunden Interval)
 
-##Support
-Falls ihr Hilfe benötigt, Anregungen oder Fragen habt, so könnt ihr mich gerne unter it-support(at)ffw-beetz-sommerfeld.de kontaktieren.
 
 ##Offene Bugs/TODOs
 <ul>
