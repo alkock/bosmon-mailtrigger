@@ -1,9 +1,3 @@
-# Projekt eingestellt!
-
-Ich bin leider nicht mehr in der Feuerwehr tätig. Ich kann leider keinen Support mehr dafür leisten.
-Bitte schreiben Sie keine Mails mehr mit Anfragen an mich, ich kann diese nicht mehr beantworten.
-In der Retroperspektive war das sowieso nie eine gute Idee. Verwendet die supporteten Eingangskanäle von BosMon!
-
 # bosmon-mailtrigger
 
 Das Programm bosmon-mailtrigger (Arbeitsname) stellt eine Brücke von einem IMAP-Client zu <a href=http://www.bosmon.de>BosMon</a> dar.
